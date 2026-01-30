@@ -40,6 +40,7 @@ indices = pd.Series(df.index, index=df['title']).drop_duplicates()
 def _format_result(result_df):
     output = result_df.copy()
     output['release_date'] = output['release_date'].fillna('Unknown')
+    output['imdb_id'] = output['imdb_id'].fillna('Unknown')
     return output.to_dict(orient='records')
 
 # --------------------------------------------------
@@ -71,7 +72,7 @@ def recommend_by_movie(movie_title, top_n=10):
     temp_df = temp_df[temp_df['similarity'] > 0]
     temp_df = temp_df.sort_values(by='rating', ascending=False)
 
-    result = temp_df[['title', 'genres', 'rating', 'release_date']].head(top_n)
+    result = temp_df[['title', 'genres', 'rating', 'release_date', 'imdb_id']].head(top_n)
 
     return _format_result(result)
 
@@ -90,7 +91,7 @@ def recommend_by_genre(genre, top_n=10):
     result = (
         df[genre_mask]
         .sort_values(by='rating', ascending=False)
-        [['title', 'genres', 'rating', 'release_date']]
+        [['title', 'genres', 'rating', 'release_date','imdb_id']]
         .head(top_n)
     )
 
