@@ -4,16 +4,9 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import linear_kernel
 from rapidfuzz import process
 
-# --------------------------------------------------
-# Load dataset
-# --------------------------------------------------
-
 df = pd.read_csv("movie_dataset_cleaned.csv")
 
-# --------------------------------------------------
 # Data cleaning
-# --------------------------------------------------
-
 df['rating'] = df['rating'].fillna(df['rating'].mean())
 df['genres'] = df['genres'].fillna('')
 df['release_date'] = pd.to_numeric(df['release_date'], errors='coerce')
@@ -24,29 +17,20 @@ df['genres'] = (
     .str.replace(',', ' ', regex=False)
 )
 
-# --------------------------------------------------
 # TF-IDF model (ONE MODEL)
-# --------------------------------------------------
-
 tfidf = TfidfVectorizer()
 tfidf_matrix = tfidf.fit_transform(df['genres'])
 
 indices = pd.Series(df.index, index=df['title']).drop_duplicates()
 
-# --------------------------------------------------
-# Helper: format output
-# --------------------------------------------------
-
+# Format output
 def _format_result(result_df):
     output = result_df.copy()
     output['release_date'] = output['release_date'].fillna('Unknown')
     output['imdb_id'] = output['imdb_id'].fillna('Unknown')
     return output.to_dict(orient='records')
 
-# --------------------------------------------------
 # Recommendation: By Movie
-# --------------------------------------------------
-
 def recommend_by_movie(movie_title, top_n=10):
     if movie_title not in indices:
         suggestions = process.extract(movie_title, indices.index, limit=5)
@@ -76,11 +60,7 @@ def recommend_by_movie(movie_title, top_n=10):
 
     return _format_result(result)
 
-
-# --------------------------------------------------
 # Recommendation: By Genre
-# --------------------------------------------------
-
 def recommend_by_genre(genre, top_n=10):
     if not genre:
         return []
