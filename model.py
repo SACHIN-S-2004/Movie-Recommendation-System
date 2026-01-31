@@ -10,6 +10,7 @@ df = pd.read_csv("movie_dataset_cleaned.csv")
 df['rating'] = df['rating'].fillna(df['rating'].mean())
 df['genres'] = df['genres'].fillna('')
 df['release_date'] = df['release_date'].fillna('Unknown')
+df['overview'] = df['overview'].fillna('Unknown')
 
 df['genres'] = (
     df['genres']
@@ -53,9 +54,17 @@ def recommend_by_movie(movie_title, top_n=10):
 
     temp_df = df.assign(similarity=similarity_scores)
     temp_df = temp_df[temp_df['similarity'] > 0]
-    temp_df = temp_df.sort_values(by='rating', ascending=False)
-
-    result = temp_df[['title', 'genres', 'rating', 'release_date', 'imdb_id']].head(top_n)
+    
+    # Get top candidates (3x the required amount) sorted by rating
+    candidates = temp_df.sort_values(by='rating', ascending=False).head(top_n * 3)
+    
+    # Randomly sample from top candidates
+    if len(candidates) >= top_n:
+        result = candidates.sample(n=top_n, random_state=None)
+    else:
+        result = candidates
+    
+    result = result[['title', 'genres', 'rating', 'release_date', 'imdb_id', 'overview']]
 
     return _format_result(result)
 
@@ -76,11 +85,19 @@ def recommend_by_genre(genres, top_n=10):
     for genre in genres:
         genre_mask &= df['genres'].str.contains(genre, case=False, na=False, regex=False)
     
-    result = (
+    # Get top candidates (3x the required amount) sorted by rating
+    candidates = (
         df[genre_mask]
         .sort_values(by='rating', ascending=False)
-        [['title', 'genres', 'rating', 'release_date','imdb_id']]
-        .head(top_n)
+        .head(top_n * 3)
     )
+    
+    # Randomly sample from top candidates
+    if len(candidates) >= top_n:
+        result = candidates.sample(n=top_n, random_state=None)
+    else:
+        result = candidates
+    
+    result = result[['title', 'genres', 'rating', 'release_date','imdb_id', 'overview']]
 
     return _format_result(result)

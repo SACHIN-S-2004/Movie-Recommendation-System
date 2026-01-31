@@ -55,7 +55,7 @@
         .container {
             width: 100%;
             max-width: 800px;
-            padding: 0px 20px;
+            padding: 10px 20px;
             animation: slideDown 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
         }
 
@@ -164,7 +164,7 @@
             gap: 15px;
             margin-top: 10px;
             width: 100%;
-            padding: 0px 20px;
+            padding: 10px 20px;
             animation: slideDown 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
         }
 
@@ -175,7 +175,7 @@
             padding: 20px;
             border-radius: 16px;
             position: relative;
-            overflow: hidden;
+            overflow: visible;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             animation: fadeIn 0.5s ease backwards;
             display: flex;
@@ -220,6 +220,52 @@
 
         .rating-star {
             color: #facc15; /* Yellow */
+        }
+
+        /* Overview Tooltip */
+        .overview-tooltip {
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%) translateY(-10px);
+            background: rgba(15, 23, 42, 0.98);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            padding: 15px;
+            border-radius: 12px;
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            width: 280px;
+            max-width: 90vw;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 1000;
+            font-size: 0.85rem;
+            line-height: 1.5;
+            color: var(--text-muted);
+        }
+
+        .card:hover .overview-tooltip {
+            opacity: 1;
+            transform: translateX(-50%) translateY(-5px);
+        }
+
+        .overview-tooltip::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 8px solid transparent;
+            border-top-color: rgba(15, 23, 42, 0.98);
+        }
+
+        .overview-tooltip strong {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--accent);
+            font-size: 0.9rem;
         }
 
         /* Mobile Responsiveness */
@@ -405,6 +451,10 @@
             card.style.animationDelay = `${index * 0.1}s`;
             
             card.innerHTML = `
+                <div class="overview-tooltip">
+                    <strong>Overview</strong>
+                    ${movie.overview && movie.overview !== 'Unknown' ? movie.overview : 'No overview available'}
+                </div>
                 <strong>${movie.title}</strong>
                 <span>${movie.genres}</span>
                 ${movie.imdb_id && movie.imdb_id !== 'Unknown' 
