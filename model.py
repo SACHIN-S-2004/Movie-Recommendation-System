@@ -9,7 +9,7 @@ df = pd.read_csv("movie_dataset_cleaned.csv")
 # Data cleaning
 df['rating'] = df['rating'].fillna(df['rating'].mean())
 df['genres'] = df['genres'].fillna('')
-df['release_date'] = pd.to_numeric(df['release_date'], errors='coerce')
+df['release_date'] = df['release_date'].fillna('Unknown')
 
 df['genres'] = (
     df['genres']
@@ -26,7 +26,6 @@ indices = pd.Series(df.index, index=df['title']).drop_duplicates()
 # Format output
 def _format_result(result_df):
     output = result_df.copy()
-    output['release_date'] = output['release_date'].fillna('Unknown')
     output['imdb_id'] = output['imdb_id'].fillna('Unknown')
     return output.to_dict(orient='records')
 
@@ -61,13 +60,22 @@ def recommend_by_movie(movie_title, top_n=10):
     return _format_result(result)
 
 # Recommendation: By Genre
-def recommend_by_genre(genre, top_n=10):
-    if not genre:
+def recommend_by_genre(genres, top_n=10):
+    if not genres:
         return []
 
-    genre = genre.replace("Science Fiction", "Sci-Fi")
+    # Handle both single genre (string) and multiple genres (list)
+    if isinstance(genres, str):
+        genres = [genres]
+    
+    # Replace Science Fiction with Sci-Fi for all genres
+    genres = [g.replace("Science Fiction", "Sci-Fi") for g in genres]
 
-    genre_mask = df['genres'].str.contains(genre, case=False, na=False)
+    # Create mask that matches ALL selected genres (AND logic)
+    genre_mask = pd.Series([True] * len(df), index=df.index)
+    for genre in genres:
+        genre_mask &= df['genres'].str.contains(genre, case=False, na=False, regex=False)
+    
     result = (
         df[genre_mask]
         .sort_values(by='rating', ascending=False)

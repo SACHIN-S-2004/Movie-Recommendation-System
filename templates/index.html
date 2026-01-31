@@ -55,7 +55,7 @@
         .container {
             width: 100%;
             max-width: 800px;
-            padding: 40px 20px;
+            padding: 0px 20px;
             animation: slideDown 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
         }
 
@@ -160,9 +160,12 @@
         /* Results Area */
         .results {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); /* Grid layout */
+            grid-template-columns: repeat(5, 1fr); /* 5 columns layout */
             gap: 15px;
             margin-top: 10px;
+            width: 100%;
+            padding: 0px 20px;
+            animation: slideDown 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
         }
 
         /* Movie Cards */
@@ -224,6 +227,9 @@
             .controls-grid {
                 grid-template-columns: 1fr;
             }
+            .results {
+                grid-template-columns: 1fr;
+            }
             h1 { font-size: 2rem; }
         }
 
@@ -248,6 +254,80 @@
             background: rgba(255,255,255,0.03);
             border-radius: 16px;
         }
+
+        /* Genre Button Styles */
+        .genre-buttons {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .genre-btn {
+            padding: 12px 16px;
+            border-radius: 10px;
+            border: 2px solid rgba(255,255,255,0.15);
+            background: rgba(15, 23, 42, 0.4);
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            user-select: none;
+        }
+
+        .genre-btn:hover {
+            border-color: rgba(139, 92, 246, 0.5);
+            background: rgba(15, 23, 42, 0.6);
+            transform: translateY(-2px);
+        }
+
+        .genre-btn.selected {
+            border-color: var(--accent);
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.3) 0%, rgba(109, 40, 217, 0.3) 100%);
+            color: #fff;
+            box-shadow: 0 0 20px rgba(139, 92, 246, 0.3);
+        }
+
+        .genre-btn.selected:hover {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.4) 0%, rgba(109, 40, 217, 0.4) 100%);
+        }
+
+        .checkmark {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--accent);
+            opacity: 0;
+            transform: scale(0) rotate(-180deg);
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        .genre-btn.selected .checkmark {
+            opacity: 1;
+            transform: scale(1) rotate(0deg);
+        }
+
+        .checkmark::before {
+            content: '✓';
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        /* Action button override for genre section */
+        .genre-action-btn {
+            margin-top: 15px;
+        }
     </style>
 </head>
 <body>
@@ -264,26 +344,52 @@
 
         <div class="section">
             <h2>🎭 Browse by Genre</h2>
-            <select id="genreSelect">
-                <option value="">Select Genre</option>
-                <option>Sci-Fi</option>
-                <option>Drama</option>
-                <option>Thriller</option>
-                <option>Comedy</option>
-                <option>Romance</option>
-                <option>Action</option>
-                <option>Horror</option>
-                <option>Animation</option>
-            </select>
-            <button onclick="recommendByGenre()">Get Recommendations</button>
+            <div id="genreButtons" class="genre-buttons">
+                <div class="genre-btn" data-genre="Sci-Fi" onclick="toggleGenre(this)">
+                    <span>Sci-Fi</span>
+                    <span class="checkmark"></span>
+                </div>
+                <div class="genre-btn" data-genre="Drama" onclick="toggleGenre(this)">
+                    <span>Drama</span>
+                    <span class="checkmark"></span>
+                </div>
+                <div class="genre-btn" data-genre="Thriller" onclick="toggleGenre(this)">
+                    <span>Thriller</span>
+                    <span class="checkmark"></span>
+                </div>
+                <div class="genre-btn" data-genre="Comedy" onclick="toggleGenre(this)">
+                    <span>Comedy</span>
+                    <span class="checkmark"></span>
+                </div>
+                <div class="genre-btn" data-genre="Romance" onclick="toggleGenre(this)">
+                    <span>Romance</span>
+                    <span class="checkmark"></span>
+                </div>
+                <div class="genre-btn" data-genre="Action" onclick="toggleGenre(this)">
+                    <span>Action</span>
+                    <span class="checkmark"></span>
+                </div>
+                <div class="genre-btn" data-genre="Horror" onclick="toggleGenre(this)">
+                    <span>Horror</span>
+                    <span class="checkmark"></span>
+                </div>
+                <div class="genre-btn" data-genre="Animation" onclick="toggleGenre(this)">
+                    <span>Animation</span>
+                    <span class="checkmark"></span>
+                </div>
+            </div>
+            <button class="genre-action-btn" onclick="recommendByGenre()">Get Recommendations</button>
         </div>
     </div>
-
-    <div class="results" id="results"></div>
 </div>
+<div class="results" id="results"></div>
 
 <script>
     const resultsDiv = document.getElementById("results");
+
+    function toggleGenre(button) {
+        button.classList.toggle('selected');
+    }
 
     function renderResults(movies) {
         resultsDiv.innerHTML = "";
@@ -306,7 +412,7 @@
                     : ''}
                 <div class="card-meta">
                     <div><span class="rating-star">⭐</span> ${movie.rating}</div>
-                    <div>${movie.year ?? "Unknown"}</div>
+                    <div>${movie.release_date ?? "Unknown"}</div>
                 </div>
             `;
             resultsDiv.appendChild(card);
@@ -344,12 +450,15 @@
     }
 
     async function recommendByGenre() {
-        const genreSelect = document.getElementById("genreSelect");
-        const btn = genreSelect.nextElementSibling;
+        const selectedButtons = document.querySelectorAll("#genreButtons .genre-btn.selected");
+        const btn = document.querySelector(".genre-action-btn");
         const originalText = btn.innerText;
 
-        const genre = genreSelect.value;
-        if (!genre) return;
+        const genres = Array.from(selectedButtons).map(btn => btn.dataset.genre);
+        if (genres.length === 0) {
+            resultsDiv.innerHTML = "<div class='empty-state'>Please select at least one genre.</div>";
+            return;
+        }
 
         // Button Loading State
         btn.innerText = "Filtering...";
@@ -359,7 +468,7 @@
             const response = await fetch("/recommend/genre", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ genre })
+                body: JSON.stringify({ genres })
             });
 
             const data = await response.json();

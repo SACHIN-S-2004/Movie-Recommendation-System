@@ -14,8 +14,8 @@ def movie_recommendation():
 
 @app.route("/recommend/genre", methods=["POST"])
 def genre_recommendation():
-    genre = request.json.get("genre", "")
-    return jsonify(recommend_by_genre(genre))
+    genres = request.json.get("genres", [])
+    return jsonify(recommend_by_genre(genres))
 
 if __name__ == "__main__":
     app.run(debug=True)
