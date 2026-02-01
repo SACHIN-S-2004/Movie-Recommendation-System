@@ -384,13 +384,17 @@
     <div class="controls-grid">
         <div class="section">
             <h2>🔎 Search by Movie</h2>
-            <input type="text" id="movieInput" placeholder="e.g. Primal Fear">
+            <input type="text" id="movieInput" placeholder="e.g. The Avengers">
             <button onclick="recommendByMovie()">Get Recommendations</button>
         </div>
 
         <div class="section">
             <h2>🎭 Browse by Genre</h2>
             <div id="genreButtons" class="genre-buttons">
+                <div class="genre-btn" data-genre="Fantasy" onclick="toggleGenre(this)">
+                    <span>Fantasy</span>
+                    <span class="checkmark"></span>
+                </div>
                 <div class="genre-btn" data-genre="Sci-Fi" onclick="toggleGenre(this)">
                     <span>Sci-Fi</span>
                     <span class="checkmark"></span>
@@ -399,28 +403,32 @@
                     <span>Drama</span>
                     <span class="checkmark"></span>
                 </div>
-                <div class="genre-btn" data-genre="Thriller" onclick="toggleGenre(this)">
-                    <span>Thriller</span>
-                    <span class="checkmark"></span>
-                </div>
-                <div class="genre-btn" data-genre="Comedy" onclick="toggleGenre(this)">
-                    <span>Comedy</span>
+                <div class="genre-btn" data-genre="Mystery" onclick="toggleGenre(this)">
+                    <span>Mystery</span>
                     <span class="checkmark"></span>
                 </div>
                 <div class="genre-btn" data-genre="Romance" onclick="toggleGenre(this)">
                     <span>Romance</span>
                     <span class="checkmark"></span>
                 </div>
+                <div class="genre-btn" data-genre="Comedy" onclick="toggleGenre(this)">
+                    <span>Comedy</span>
+                    <span class="checkmark"></span>
+                </div>
                 <div class="genre-btn" data-genre="Action" onclick="toggleGenre(this)">
                     <span>Action</span>
+                    <span class="checkmark"></span>
+                </div>
+                <div class="genre-btn" data-genre="Adventure" onclick="toggleGenre(this)">
+                    <span>Adventure</span>
                     <span class="checkmark"></span>
                 </div>
                 <div class="genre-btn" data-genre="Horror" onclick="toggleGenre(this)">
                     <span>Horror</span>
                     <span class="checkmark"></span>
                 </div>
-                <div class="genre-btn" data-genre="Animation" onclick="toggleGenre(this)">
-                    <span>Animation</span>
+                <div class="genre-btn" data-genre="Thriller" onclick="toggleGenre(this)">
+                    <span>Thriller</span>
                     <span class="checkmark"></span>
                 </div>
             </div>
@@ -456,9 +464,9 @@
                     ${movie.overview && movie.overview !== 'Unknown' ? movie.overview : 'No overview available'}
                 </div>
                 <strong>${movie.title}</strong>
-                <span>${movie.genres}</span>
-                ${movie.imdb_id && movie.imdb_id !== 'Unknown' 
-                    ? `<a href="https://www.imdb.com/title/${movie.imdb_id}" target="_blank" style="color: #facc15; text-decoration: none; font-size: 0.85rem; padding: 4px 8px; background: rgba(255,255,255,0.05); border-radius: 6px; width: fit-content;">🎬 IMDb</a>` 
+                <span>${movie.genre}</span>
+                ${movie.title && movie.title !== 'Unknown' 
+                    ? `<a href="https://www.imdb.com/find/?q=${encodeURIComponent(movie.title)}&s=tt" target="_blank" style="color: #facc15; text-decoration: none; font-size: 0.85rem; padding: 4px 8px; background: rgba(255,255,255,0.05); border-radius: 6px; width: fit-content;">🎬 IMDb</a>` 
                     : ''}
                 <div class="card-meta">
                     <div><span class="rating-star">⭐</span> ${movie.rating}</div>
